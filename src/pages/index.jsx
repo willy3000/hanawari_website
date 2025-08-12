@@ -216,7 +216,7 @@ export default function index() {
                 onClick={() => setIsModalOpen(true)}
                 className="bg-[#FF4500] hover:bg-[#FF6347] text-white font-bold py-4 px-8 text-xl rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
               >
-                🔥 GET YOUR MOTO NOW! 🔥
+                🔥 GET YOUR SALSA NOW! 🔥
               </button>
             </div>
 
@@ -341,7 +341,7 @@ export default function index() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-5xl font-bold text-[#8B4513] mb-6">
-              MOTO LOVERS SAY
+              HANAWARI LOVERS SAY
             </h2>
           </div>
 
@@ -349,8 +349,8 @@ export default function index() {
             <div className="bg-[#D4B896] p-6 rounded-lg shadow-lg">
               <div className="text-[#FF4500] text-2xl mb-3">⭐⭐⭐⭐⭐</div>
               <p className="text-[#5D4E37] mb-4">
-                "This salsa brought back memories of my trip to Kenya! The
-                authentic flavors are incredible!"
+                "This salsa is like none I've had before. The
+                blend of spices is incredible!"
               </p>
               <p className="font-bold text-[#8B4513]">- Sarah K.</p>
             </div>
@@ -379,7 +379,7 @@ export default function index() {
               onClick={() => setIsModalOpen(true)}
               className="bg-[#FF4500] hover:bg-[#FF6347] text-white font-bold py-4 px-8 text-xl rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
             >
-              JOIN THE MOTO FAMILY TODAY!
+              JOIN THE HANAWARI FAMILY TODAY!
             </button>
           </div>
         </div>
@@ -490,7 +490,7 @@ export default function index() {
 
           <div className="border-t border-[#8B4513] pt-8">
             <p>
-              {`&copy; ${new Date().getFullYear()} Hanawari. All rights reserved. Made with 🔥 in Kenya.`}
+              {`${new Date().getFullYear()} Hanawari. All rights reserved. Made with 🔥 in Kenya.`}
             </p>
           </div>
         </div>
