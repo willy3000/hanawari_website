@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <link rel="icon" href="/assets/logo-bg.png" />
+        <link rel="icon" href="/assets/logo-bg-ico.png" />
         <title>Hanawari Salsa – Premium Homemade Salsa in Kenya</title>
         <meta
           name="description"
