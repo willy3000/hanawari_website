@@ -269,33 +269,31 @@ export default function index() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-[#F5E6D3] p-8 rounded-lg shadow-xl text-center transform hover:scale-105 transition-all duration-200">
               <div className="text-6xl mb-4">🌶️</div>
-              <h3 className="text-2xl font-bold text-[#8B4513] mb-4">
-                GENTLE MOTO
-              </h3>
+              <h3 className="text-2xl font-bold text-[#8B4513] mb-4">GENTLE</h3>
               <p className="text-[#5D4E37] mb-6">
                 Perfect for beginners - a warm introduction to Kenyan flavors
               </p>
               <div className="text-3xl font-bold text-[#FF4500] mb-6">
-                KES 499
+                KES 899
               </div>
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="bg-[#FF4500] hover:bg-[#FF6347] text-white font-bold py-3 px-6 rounded-lg shadow-lg w-full"
               >
-                ORDER GENTLE MOTO
+                ORDER GENTLE
               </button>
             </div>
 
             <div className="bg-[#F5E6D3] p-8 rounded-lg shadow-xl text-center transform hover:scale-105 transition-all duration-200 border-4 border-[#FF4500]">
               <div className="text-6xl mb-4">🌶️🌶️</div>
               <h3 className="text-2xl font-bold text-[#8B4513] mb-4">
-                CLASSIC MOTO
+                CLASSIC
               </h3>
               <p className="text-[#5D4E37] mb-6">
                 Our signature blend - the perfect balance of heat and flavor
               </p>
               <div className="text-3xl font-bold text-[#FF4500] mb-6">
-                KES 499
+                KES 899
               </div>
               <div className="bg-[#FF4500] text-white px-3 py-1 rounded-full text-sm mb-4">
                 MOST POPULAR
@@ -304,26 +302,26 @@ export default function index() {
                 onClick={() => setIsModalOpen(true)}
                 className="bg-[#FF4500] hover:bg-[#FF6347] text-white font-bold py-3 px-6 rounded-lg shadow-lg w-full"
               >
-                ORDER CLASSIC MOTO
+                ORDER CLASSIC
               </button>
             </div>
 
             <div className="bg-[#F5E6D3] p-8 rounded-lg shadow-xl text-center transform hover:scale-105 transition-all duration-200">
               <div className="text-6xl mb-4">🌶️🌶️🌶️</div>
               <h3 className="text-2xl font-bold text-[#8B4513] mb-4">
-                VOLCANO MOTO
+                VOLCANIC
               </h3>
               <p className="text-[#5D4E37] mb-6">
                 For the brave souls - experience the full power of Kenyan fire!
               </p>
               <div className="text-3xl font-bold text-[#FF4500] mb-6">
-                KES 499
+                KES 899
               </div>
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="bg-[#FF4500] hover:bg-[#FF6347] text-white font-bold py-3 px-6 rounded-lg shadow-lg w-full"
               >
-                ORDER VOLCANO MOTO
+                ORDER VOLCANIC
               </button>
             </div>
           </div>
@@ -428,27 +426,71 @@ export default function index() {
           <div className="grid md:grid-cols-3 gap-8 mb-8">
             <div>
               <h4 className="font-bold mb-4">Contact</h4>
-              <p>📧 hello@hanawari.com</p>
-              <p>📱 +1 (555) HANAWARI</p>
+              <button
+                onClick={() => handleOrderOption("whatsapp")}
+                className="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white font-bold py-4 px-6 rounded-lg shadow-lg flex items-center justify-center space-x-3 transition-all duration-200 m-1"
+              >
+                <span className="text-2xl">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5"
+                    fill="currentColor"
+                  >
+                    <path d="M20.52 3.48A11.94 11.94 0 0012 .1C5.73.1.88 4.95.88 11.22c0 1.98.52 3.9 1.5 5.6L.1 23.9l6.26-1.64a11.2 11.2 0 005.56 1.44c6.27 0 11.12-4.85 11.12-11.12 0-3-1.17-5.8-3.18-7.9zM12 20.1a9 9 0 01-4.6-1.2l-.33-.2-3.7.97.98-3.6-.21-.36A9 9 0 1112 20.1z" />
+                    <path d="M17.2 14.3c-.3-.15-1.78-.87-2.05-.97-.27-.1-.47-.15-.67.15-.2.3-.8.97-.98 1.17-.18.2-.36.22-.67.07-.3-.14-1.26-.46-2.4-1.48-.88-.78-1.47-1.73-1.64-2.03-.17-.3-.02-.46.13-.6.13-.12.3-.32.45-.48.15-.17.2-.28.3-.47.1-.2 0-.37-.02-.52-.02-.15-.67-1.6-.92-2.19-.24-.57-.48-.49-.66-.5l-.57-.01c-.2 0-.52.07-.79.37-.27.3-1.03 1.01-1.03 2.47s1.05 2.87 1.2 3.07c.14.2 2.08 3.2 5.04 4.49 2.97 1.3 2.97.87 3.5.82.53-.05 1.72-.7 1.97-1.38.25-.68.25-1.26.17-1.38-.08-.12-.3-.2-.6-.35z" />
+                  </svg>
+                </span>
+                <span>+25497871209</span>
+              </button>
+              <button
+                onClick={() => handleOrderOption("email")}
+                className="w-full bg-[#FF4500] hover:bg-[#FF6347] text-white font-bold py-4 px-6 rounded-lg shadow-lg flex items-center justify-center space-x-3 transition-all duration-200 m-1"
+              >
+                <span className="text-2xl">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5"
+                    fill="currentColor"
+                  >
+                    <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" />
+                  </svg>
+                </span>
+                <span>hanawarihomemade@gmail.com</span>
+              </button>
             </div>
             <div>
               <h4 className="font-bold mb-4">Follow Us</h4>
-              <p>📱 @HanawariSalsa</p>
-              <p>📘 Facebook.com/Hanawari</p>
+
+              <button
+                onClick={() => handleOrderOption("instagram")}
+                className="w-full bg-[#E4405F] hover:bg-[#D73652] text-white font-bold py-4 px-6 rounded-lg shadow-lg flex items-center justify-center space-x-3 transition-all duration-200"
+              >
+                <span className="text-2xl">
+                  {" "}
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5"
+                    fill="currentColor"
+                  >
+                    <path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm5 6.2A4.8 4.8 0 1016.8 13 4.8 4.8 0 0012 8.2zm6.4-2.6a1.2 1.2 0 11-1.2 1.2 1.2 1.2 0 011.2-1.2zM12 10.6A1.4 1.4 0 1110.6 12 1.4 1.4 0 0112 10.6z" />
+                  </svg>
+                </span>
+                <span>@hanawari_salsaI</span>
+              </button>
             </div>
             <div>
               <button
                 onClick={() => setIsModalOpen(true)}
                 className="bg-[#FF4500] hover:bg-[#FF6347] text-white font-bold py-3 px-6 rounded-lg shadow-lg"
               >
-                LAST CHANCE - ORDER NOW!
+                ORDER NOW!
               </button>
             </div>
           </div>
 
           <div className="border-t border-[#8B4513] pt-8">
             <p>
-              &copy; 2025 Hanawari. All rights reserved. Made with 🔥 in Kenya.
+              {`&copy; ${new Date().getFullYear()} Hanawari. All rights reserved. Made with 🔥 in Kenya.`}
             </p>
           </div>
         </div>
