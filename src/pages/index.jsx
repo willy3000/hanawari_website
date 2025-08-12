@@ -475,7 +475,7 @@ export default function index() {
                     <path d="M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5zm5 6.2A4.8 4.8 0 1016.8 13 4.8 4.8 0 0012 8.2zm6.4-2.6a1.2 1.2 0 11-1.2 1.2 1.2 1.2 0 011.2-1.2zM12 10.6A1.4 1.4 0 1110.6 12 1.4 1.4 0 0112 10.6z" />
                   </svg>
                 </span>
-                <span>@hanawari_salsaI</span>
+                <span>@hanawari_salsa</span>
               </button>
             </div>
             <div>
