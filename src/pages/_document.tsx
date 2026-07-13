@@ -5,13 +5,9 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <link rel="icon" href="/assets/logo-bg-ico.png" />
-        <title>Hanawari Salsa – Premium Homemade Salsa in Kenya</title>
-        <meta
-          name="description"
-          content="Premium homemade salsa made with fresh ingredients. Order online for fast delivery."
-        />
+        <meta name="theme-color" content="#170f0a" />
       </Head>
-      <body className="antialiased">
+      <body className="antialiased bg-char-950 text-cream-50">
         <Main />
         <NextScript />
       </body>
