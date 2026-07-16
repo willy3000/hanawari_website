@@ -24,10 +24,12 @@ export function HeroJar({ pinTargetRef }: HeroJarProps) {
     if (!wrapperRef.current) return;
 
     if (!reducedMotion) {
+      // y-only: the placeholder overlay lives inside this wrapper, so fading
+      // the wrapper would blink it out during the dynamic-import handoff.
       gsap.fromTo(
         wrapperRef.current,
-        { y: 24, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.9, ease: "power2.out", delay: 0.15 }
+        { y: 24 },
+        { y: 0, duration: 0.9, ease: "power2.out", delay: 0.15 }
       );
     }
 
