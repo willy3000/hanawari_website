@@ -13,6 +13,8 @@ export interface Product {
   labelColor: string;
   labelColorDark: string;
   badge?: string;
+  /** Featured products (max 3, curated in the admin) headline the landing page. */
+  featured?: boolean;
 }
 
 export interface CartItem {

@@ -76,10 +76,14 @@ function computeCartTotals(
     return sum + (product ? product.priceKes * item.quantity : 0);
   }, 0);
 
+  // Mirrors the backend: the bundle deal is "one of every featured product"
+  // (the trio on the landing page), not the whole catalog, so adding new
+  // products in the admin doesn't make the discount unreachable.
   const distinctProductIds = new Set(items.map((i) => i.productId));
+  const featuredProducts = products.filter((p) => p.featured);
   const hasFullBundle =
-    products.length > 0 &&
-    products.every((p) => distinctProductIds.has(p.id)) &&
+    featuredProducts.length > 0 &&
+    featuredProducts.every((p) => distinctProductIds.has(p.id)) &&
     items.every((i) => i.quantity >= 1);
 
   const discountKes = hasFullBundle ? BUNDLE_DISCOUNT_KES : 0;
@@ -198,6 +202,9 @@ function cartReducer(state: CartState, action: CartAction): CartState {
 }
 
 interface CartContextValue extends CartState {
+  /** The admin-curated trio shown on the landing page (falls back to the
+   * first three products if nothing is marked featured yet). */
+  featuredProducts: Product[];
   addItem: (productId: string, quantity?: number) => void;
   removeItem: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -335,10 +342,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     () => state.items.reduce((sum, i) => sum + i.quantity, 0),
     [state.items]
   );
+  const featuredProducts = useMemo(() => {
+    const featured = state.products.filter((p) => p.featured);
+    return featured.length > 0 ? featured : state.products.slice(0, 3);
+  }, [state.products]);
 
   const value = useMemo<CartContextValue>(
     () => ({
       ...state,
+      featuredProducts,
       addItem,
       removeItem,
       updateQuantity,
@@ -363,6 +375,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }),
     [
       state,
+      featuredProducts,
       addItem,
       removeItem,
       updateQuantity,

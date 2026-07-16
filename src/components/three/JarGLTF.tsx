@@ -50,9 +50,21 @@ export function JarGLTF({
   const model = useMemo(() => {
     const clone = scene.clone(true);
 
-    const box = new THREE.Box3().setFromObject(clone);
+    let box = new THREE.Box3().setFromObject(clone);
     const size = new THREE.Vector3();
     box.getSize(size);
+
+    // Some exporters (e.g. trimesh) write Z-up geometry with no corrective
+    // rotation, but glTF/three.js are Y-up — the jar arrives lying on its
+    // side. If the longest axis is Z, stand it upright before normalizing,
+    // otherwise the height-based scale below blows the width out instead.
+    if (size.z > size.y && size.z >= size.x) {
+      clone.rotation.x = -Math.PI / 2;
+      clone.updateMatrixWorld(true);
+      box = new THREE.Box3().setFromObject(clone);
+      box.getSize(size);
+    }
+
     const center = new THREE.Vector3();
     box.getCenter(center);
 

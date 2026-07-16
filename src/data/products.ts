@@ -14,6 +14,7 @@ export const PRODUCTS: Product[] = [
     accentSoft: "#E3B272",
     labelColor: "#CD853F",
     labelColorDark: "#8B4513",
+    featured: true,
   },
   {
     id: "classic",
@@ -29,6 +30,7 @@ export const PRODUCTS: Product[] = [
     labelColor: "#FF4500",
     labelColorDark: "#8B4513",
     badge: "Most popular",
+    featured: true,
   },
   {
     id: "volcanic",
@@ -43,6 +45,7 @@ export const PRODUCTS: Product[] = [
     accentSoft: "#A13618",
     labelColor: "#5C1B0C",
     labelColorDark: "#20150d",
+    featured: true,
   },
 ];
 

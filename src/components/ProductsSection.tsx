@@ -1,15 +1,24 @@
 import { useState } from "react";
+import Link from "next/link";
 import { HeatSelector } from "@/components/HeatSelector";
 import { ProductCard } from "@/components/ProductCard";
 import { RevealOnScroll } from "@/components/RevealOnScroll";
 import { useCart } from "@/lib/cart-context";
 
 export function ProductsSection() {
-  const { products, addItem, openDrawer } = useCart();
-  const [selectedId, setSelectedId] = useState(products[1]?.id ?? products[0]?.id);
+  const { featuredProducts, addItem, openDrawer } = useCart();
+  const [selectedId, setSelectedId] = useState(
+    featuredProducts[1]?.id ?? featuredProducts[0]?.id
+  );
+
+  // The live featured set can differ from the static fallback the selector
+  // initialised from — snap back to the middle jar if the selection vanished.
+  const activeId = featuredProducts.some((p) => p.id === selectedId)
+    ? selectedId
+    : (featuredProducts[1]?.id ?? featuredProducts[0]?.id);
 
   const handleBundle = () => {
-    products.forEach((p) => addItem(p.id, 1));
+    featuredProducts.forEach((p) => addItem(p.id, 1));
     openDrawer();
   };
 
@@ -30,15 +39,19 @@ export function ProductsSection() {
         </RevealOnScroll>
 
         <RevealOnScroll delay={0.1} className="mt-10 flex justify-center">
-          <HeatSelector products={products} activeId={selectedId} onSelect={setSelectedId} />
+          <HeatSelector
+            products={featuredProducts}
+            activeId={activeId}
+            onSelect={setSelectedId}
+          />
         </RevealOnScroll>
 
         <div className="mt-14 grid gap-8 md:grid-cols-3">
-          {products.map((product, i) => (
+          {featuredProducts.map((product, i) => (
             <RevealOnScroll key={product.id} delay={i * 0.08}>
               <ProductCard
                 product={product}
-                highlighted={product.id === selectedId}
+                highlighted={product.id === activeId}
               />
             </RevealOnScroll>
           ))}
@@ -55,6 +68,15 @@ export function ProductsSection() {
           <p className="mt-3 text-xs text-cream-50/50">
             Add one of every heat level and the bundle discount applies
             automatically at checkout.
+          </p>
+          <p className="mt-8">
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-gold-400 transition-colors hover:text-gold-300"
+            >
+              View all products
+              <span aria-hidden="true">&rarr;</span>
+            </Link>
           </p>
         </RevealOnScroll>
       </div>
