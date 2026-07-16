@@ -6,6 +6,8 @@
   --char-900: #20150d;
   --char-800: #2c1d13;
   --char-700: #3f2a19;
+  --char-600: #553920;
+  --char-500: #6d4a29;
   /* original CTA orange-red and its hover tomato, reused verbatim */
   --ember-600: #ff4500;
   --ember-500: #ff6347;
@@ -30,6 +32,8 @@
   --color-char-900: var(--char-900);
   --color-char-800: var(--char-800);
   --color-char-700: var(--char-700);
+  --color-char-600: var(--char-600);
+  --color-char-500: var(--char-500);
   --color-ember-600: var(--ember-600);
   --color-ember-500: var(--ember-500);
   --color-gold-400: var(--gold-400);

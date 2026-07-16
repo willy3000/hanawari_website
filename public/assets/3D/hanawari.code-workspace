@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"path": "../../../hanawari"
+		},
+		{
+			"path": "../../../../HANAWARI_ADMIN"
+		},
+		{
+			"path": "../../../../HANAWARI_BACKEND"
+		}
+	]
+}

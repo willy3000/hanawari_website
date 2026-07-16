@@ -1,9 +1,19 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { ContactShadows } from "@react-three/drei";
-import { JarModel, type ReadableValue } from "./JarModel";
+import type { ReadableValue } from "./JarModel";
 import { JarGLTF } from "./JarGLTF";
+import { JarPlaceholder } from "./JarPlaceholder";
 import { useReducedMotion } from "@/lib/useReducedMotion";
+
+/** Mounts only once the sibling GLTF has resolved inside Suspense, signalling
+ * that the real model is on screen and the placeholder can fade out. */
+function ModelReady({ onReady }: { onReady: () => void }) {
+  useEffect(() => {
+    onReady();
+  }, [onReady]);
+  return null;
+}
 
 export interface JarCanvasProps {
   labelColor: string;
@@ -36,6 +46,8 @@ export function JarCanvas({
 }: JarCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [modelReady, setModelReady] = useState(false);
+  const [showPlaceholder, setShowPlaceholder] = useState(true);
   const [tiltTarget, setTiltTarget] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const dragRotationValue = useRef(0);
@@ -92,7 +104,7 @@ export function JarCanvas({
   return (
     <div
       ref={containerRef}
-      className={className}
+      className={`relative ${className ?? ""}`}
       style={
         draggable
           ? {
@@ -119,21 +131,7 @@ export function JarCanvas({
         <directionalLight position={[3, 4, 2]} intensity={1.5} castShadow />
         <directionalLight position={[-3, 1.2, -2]} intensity={0.4} color="#cd853f" />
         <pointLight position={[0, 2.2, -1.6]} intensity={0.6} color="#ff4500" />
-        <Suspense
-          fallback={
-            <JarModel
-              labelColor={labelColor}
-              labelColorDark={labelColorDark}
-              scrollProgress={reducedMotion ? undefined : scrollProgress}
-              entryProgress={reducedMotion ? undefined : entryProgress}
-              dragRotation={reducedMotion ? undefined : dragRotationSource.current}
-              idleSpin={!reducedMotion && idleSpin}
-              tiltTarget={reducedMotion ? undefined : effectiveTilt}
-              animated={!reducedMotion}
-              baseRotation={baseRotation}
-            />
-          }
-        >
+        <Suspense fallback={null}>
           <JarGLTF
             labelColor={labelColor}
             labelColorDark={labelColorDark}
@@ -145,6 +143,7 @@ export function JarCanvas({
             animated={!reducedMotion}
             baseRotation={baseRotation}
           />
+          <ModelReady onReady={() => setModelReady(true)} />
         </Suspense>
         <ContactShadows
           position={[0, -1.18, 0]}
@@ -155,6 +154,16 @@ export function JarCanvas({
           color="#0a0605"
         />
       </Canvas>
+      {showPlaceholder && (
+        <div
+          className={`pointer-events-none absolute inset-0 transition-opacity duration-500 ${
+            modelReady ? "opacity-0" : "opacity-100"
+          }`}
+          onTransitionEnd={() => setShowPlaceholder(false)}
+        >
+          <JarPlaceholder className="h-full w-full" />
+        </div>
+      )}
     </div>
   );
 }
