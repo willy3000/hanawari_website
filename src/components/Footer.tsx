@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -6,6 +7,8 @@ import {
   InstagramIcon,
   PhoneIcon,
 } from "@/components/icons";
+import { subscribeNewsletterRequest } from "@/lib/api";
+import { NotificationsToggle } from "@/components/NotificationsToggle";
 import {
   EMAIL,
   INSTAGRAM_HANDLE,
@@ -14,6 +17,65 @@ import {
   PHONE_DISPLAY,
   WHATSAPP_URL,
 } from "@/lib/contact";
+
+function NewsletterForm() {
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "saving" | "done" | "error">(
+    "idle",
+  );
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!email.trim()) return;
+    setState("saving");
+    try {
+      await subscribeNewsletterRequest(email.trim());
+      setState("done");
+      setEmail("");
+    } catch {
+      setState("error");
+    }
+  };
+
+  if (state === "done") {
+    return (
+      <p className="mt-4 text-sm text-herb-400">
+        Karibu! You're on the list — fresh drops land in your inbox first.
+      </p>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-4">
+      <div className="flex gap-2">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          placeholder="you@example.com"
+          aria-label="Email address for the newsletter"
+          className="w-full min-w-0 rounded-full border border-cream-50/15 bg-char-950 px-4 py-2 text-sm text-cream-50 outline-none placeholder:text-cream-50/35 focus:border-gold-400"
+        />
+        <button
+          type="submit"
+          disabled={state === "saving"}
+          className="shrink-0 rounded-full bg-gold-400 px-4 py-2 text-sm font-semibold text-char-950 transition-transform hover:scale-105 disabled:opacity-60"
+        >
+          {state === "saving" ? "…" : "Join"}
+        </button>
+      </div>
+      {state === "error" && (
+        <p className="mt-2 text-xs text-ember-500">
+          Couldn't sign you up — try again in a moment.
+        </p>
+      )}
+      <p className="mt-2 text-xs text-cream-50/40">
+        New drops and subscriber-only promo codes. Unsubscribe anytime.
+      </p>
+    </form>
+  );
+}
 
 export function Footer() {
   return (
@@ -34,6 +96,8 @@ export function Footer() {
             <p className="mt-3 text-sm leading-relaxed text-cream-50/55">
               Small-batch, hand-blended in Kenya.
             </p>
+            <NewsletterForm />
+            <NotificationsToggle />
           </div>
 
           <div>

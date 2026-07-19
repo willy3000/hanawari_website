@@ -24,6 +24,48 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Order-confirmation emails (Resend)
+
+Placing an order with an email address triggers a confirmation email, sent
+server-side via [Resend](https://resend.com) from a Next.js API route.
+
+**Required env var** (in `.env.local`, server-side only — never `NEXT_PUBLIC_`):
+
+```
+RESEND_API_KEY=re_xxxxxxxx
+```
+
+**Endpoint contract** — `POST /api/orders/confirm`:
+
+```jsonc
+{
+  "customerName": "Jane",
+  "customerEmail": "jane@example.com",
+  "items": [{ "name": "Classic", "quantity": 2, "unitPriceKes": 899 }],
+  "totalKes": 1798,
+  "orderId": "HN-ABC123" // optional
+}
+```
+
+Responses: `200 {"sent":true,"id":"..."}` on success; `400 {"error":"..."}` for a
+missing/invalid email or empty items; `405` for non-POST; `502` with a generic
+message if Resend rejects the send (details are logged server-side only).
+
+The checkout flow calls this fire-and-forget after the order is accepted — a
+failed email never blocks or fails the order.
+
+**Test locally:**
+
+```bash
+npm run dev
+curl -X POST http://localhost:3000/api/orders/confirm \
+  -H "Content-Type: application/json" \
+  -d '{"customerName":"Test","customerEmail":"delivered@resend.dev","items":[{"name":"Classic","quantity":1,"unitPriceKes":899}],"totalKes":899}'
+```
+
+`delivered@resend.dev` is Resend's test inbox — the send is real but goes
+nowhere. Check the [Resend dashboard](https://resend.com/emails) to preview it.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

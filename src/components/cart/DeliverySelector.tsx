@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { useCart } from "@/lib/cart-context";
-import { DISPATCH_POINT, MAX_DELIVERY_RADIUS_KM, NAIROBI_AREAS, type NairobiArea } from "@/data/nairobi-areas";
-import { fetchDeliveryAreas } from "@/lib/api";
 import { formatKes } from "@/lib/format";
 import { PinIcon, StoreIcon } from "@/components/icons";
 import type { DeliveryMethod } from "@/types";
@@ -19,23 +17,12 @@ export function DeliverySelector() {
     deliveryMethod,
     deliveryLocation,
     deliveryQuote,
+    deliveryConfig,
+    deliveryAreas: areas,
     setDeliveryMethod,
     setDeliveryLocation,
   } = useCart();
   const [geoStatus, setGeoStatus] = useState<GeoStatus>("idle");
-  // Areas ship pre-baked from the static data file so the picker is usable instantly;
-  // this swaps them for the backend's list (the source of truth) once it responds.
-  const [areas, setAreas] = useState<NairobiArea[]>(NAIROBI_AREAS);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetchDeliveryAreas().then((result) => {
-      if (!cancelled) setAreas(result.areas);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const handleAreaChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const area = areas.find((a) => a.name === event.target.value);
@@ -149,7 +136,7 @@ export function DeliverySelector() {
               ) : (
                 <p>
                   {deliveryLocation.areaName} is {deliveryQuote.distanceKm.toFixed(0)} km away —
-                  outside our {MAX_DELIVERY_RADIUS_KM} km delivery radius. We can&rsquo;t deliver
+                  outside our {deliveryConfig.maxRadiusKm} km delivery radius. We can&rsquo;t deliver
                   there yet. Switch to pick up instead, or choose a closer area.
                 </p>
               )}
@@ -158,7 +145,7 @@ export function DeliverySelector() {
         </div>
       ) : (
         <div className="mt-4 rounded-lg bg-cream-50/5 px-3 py-2.5 text-xs text-cream-50/70">
-          Pick up from <strong className="text-cream-50">{DISPATCH_POINT.label}</strong> — no
+          Pick up from <strong className="text-cream-50">{deliveryConfig.dispatchPoint.label}</strong> — no
           delivery fee. We&rsquo;ll text you when your order is ready.
         </div>
       )}

@@ -1,4 +1,4 @@
-import type { GeoPoint } from "@/types";
+import type { DeliveryConfig, GeoPoint } from "@/types";
 
 /** Our dispatch kitchen — the point delivery distance and fees are measured from. */
 export const DISPATCH_POINT: GeoPoint & { label: string } = {
@@ -10,6 +10,15 @@ export const DISPATCH_POINT: GeoPoint & { label: string } = {
 export const MAX_DELIVERY_RADIUS_KM = 25;
 export const BASE_DELIVERY_FEE_KES = 150;
 export const PER_KM_DELIVERY_FEE_KES = 25;
+
+/** Static fallback used until the backend's admin-configured settings load
+ * (and as the offline default — mirrors the backend's own defaults). */
+export const DEFAULT_DELIVERY_CONFIG: DeliveryConfig = {
+  dispatchPoint: DISPATCH_POINT,
+  maxRadiusKm: MAX_DELIVERY_RADIUS_KM,
+  baseFeeKes: BASE_DELIVERY_FEE_KES,
+  perKmFeeKes: PER_KM_DELIVERY_FEE_KES,
+};
 
 export interface NairobiArea extends GeoPoint {
   name: string;

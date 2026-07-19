@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import type { CartItem } from "@/types";
 import { formatKes } from "@/lib/format";
 import { JarSilhouetteIcon, MinusIcon, PlusIcon } from "@/components/icons";
@@ -9,7 +10,13 @@ export function CartLineItem({ item }: { item: CartItem }) {
   if (!product) return null;
 
   return (
-    <li className="flex items-center gap-4 py-4">
+    <motion.li
+      layout
+      initial={{ opacity: 0, x: 24 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -24, height: 0, paddingTop: 0, paddingBottom: 0 }}
+      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+      className="flex items-center gap-4 overflow-hidden py-4">
       <span
         className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl"
         style={{ backgroundColor: `${product.accent}22` }}
@@ -58,6 +65,6 @@ export function CartLineItem({ item }: { item: CartItem }) {
       <p className="shrink-0 text-sm font-semibold text-cream-50">
         {formatKes(product.priceKes * item.quantity)}
       </p>
-    </li>
+    </motion.li>
   );
 }

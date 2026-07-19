@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -5,10 +6,59 @@ import { ProductCard } from "@/components/ProductCard";
 import { RevealOnScroll } from "@/components/RevealOnScroll";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { CartIcon } from "@/components/icons";
+import { fetchCategories } from "@/lib/api";
 import { useCart } from "@/lib/cart-context";
+import type { Category, Product } from "@/types";
+
+interface ProductGroup {
+  id: string;
+  name: string;
+  products: Product[];
+}
 
 export default function ProductsPage() {
   const { products, itemCount, openDrawer } = useCart();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedFilter, setSelectedFilter] = useState("all");
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchCategories().then((live) => {
+      if (!cancelled) setCategories(live);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // One group per category that actually has products, plus a trailing group
+  // for anything uncategorised. No categorised products at all -> no groups,
+  // and the page renders the classic flat grid without filters.
+  const groups = useMemo<ProductGroup[]>(() => {
+    const result: ProductGroup[] = [];
+    const known = new Set(categories.map((c) => c.id));
+    for (const category of categories) {
+      const inCategory = products.filter((p) => p.category === category.id);
+      if (inCategory.length > 0) {
+        result.push({ id: category.id, name: category.name, products: inCategory });
+      }
+    }
+    if (result.length > 0) {
+      const other = products.filter((p) => !p.category || !known.has(p.category));
+      if (other.length > 0) {
+        result.push({ id: "other", name: "Everything else", products: other });
+      }
+    }
+    return result;
+  }, [categories, products]);
+
+  // The selected category can disappear (admin deletes it, live data swaps
+  // in) — fall back to showing everything rather than an empty page.
+  const activeFilter = groups.some((g) => g.id === selectedFilter)
+    ? selectedFilter
+    : "all";
+  const visibleGroups =
+    activeFilter === "all" ? groups : groups.filter((g) => g.id === activeFilter);
 
   return (
     <>
@@ -71,13 +121,62 @@ export default function ProductsPage() {
             </p>
           </RevealOnScroll>
 
-          <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {products.map((product, i) => (
-              <RevealOnScroll key={product.id} delay={Math.min(i, 5) * 0.06}>
-                <ProductCard product={product} highlighted={Boolean(product.featured)} />
-              </RevealOnScroll>
-            ))}
-          </div>
+          {groups.length > 0 && (
+            <RevealOnScroll
+              delay={0.05}
+              className="mt-10 flex flex-wrap justify-center gap-2"
+            >
+              <FilterPill
+                label="All"
+                count={products.length}
+                active={activeFilter === "all"}
+                onClick={() => setSelectedFilter("all")}
+              />
+              {groups.map((group) => (
+                <FilterPill
+                  key={group.id}
+                  label={group.name}
+                  count={group.products.length}
+                  active={activeFilter === group.id}
+                  onClick={() => setSelectedFilter(group.id)}
+                />
+              ))}
+            </RevealOnScroll>
+          )}
+
+          {groups.length === 0 ? (
+            <div className="mt-14 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {products.map((product, i) => (
+                <RevealOnScroll key={product.id} delay={Math.min(i, 5) * 0.06}>
+                  <ProductCard product={product} highlighted={Boolean(product.featured)} />
+                </RevealOnScroll>
+              ))}
+            </div>
+          ) : (
+            visibleGroups.map((group) => (
+              <section key={group.id} aria-label={group.name} className="mt-14">
+                <RevealOnScroll>
+                  <h2 className="flex items-baseline gap-3 font-display text-2xl font-bold text-cream-50">
+                    {group.name}
+                    <span className="text-sm font-normal text-cream-50/40">
+                      {group.products.length}{" "}
+                      {group.products.length === 1 ? "product" : "products"}
+                    </span>
+                  </h2>
+                </RevealOnScroll>
+                <div className="mt-6 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                  {group.products.map((product, i) => (
+                    <RevealOnScroll key={product.id} delay={Math.min(i, 5) * 0.06}>
+                      <ProductCard
+                        product={product}
+                        highlighted={Boolean(product.featured)}
+                      />
+                    </RevealOnScroll>
+                  ))}
+                </div>
+              </section>
+            ))
+          )}
 
           {products.length === 0 && (
             <p className="mt-14 text-center text-sm text-cream-50/50">
@@ -89,5 +188,35 @@ export default function ProductsPage() {
 
       <CartDrawer />
     </>
+  );
+}
+
+function FilterPill({
+  label,
+  count,
+  active,
+  onClick,
+}: {
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+        active
+          ? "border-gold-400 bg-gold-400/15 text-gold-300"
+          : "border-cream-50/15 text-cream-50/65 hover:border-gold-400/50 hover:text-gold-300"
+      }`}
+    >
+      {label}
+      <span className={`ml-1.5 text-xs ${active ? "text-gold-300/70" : "text-cream-50/35"}`}>
+        {count}
+      </span>
+    </button>
   );
 }

@@ -1,14 +1,15 @@
 import { useState, type FormEvent } from "react";
 import { useCart } from "@/lib/cart-context";
 import { formatKes } from "@/lib/format";
-import { DISPATCH_POINT } from "@/data/nairobi-areas";
 import { PinIcon, StoreIcon } from "@/components/icons";
 
 const PHONE_PATTERN = /^(?:\+254|0)(7|1)\d{8}$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 interface FormErrors {
   name?: string;
   phone?: string;
+  email?: string;
   address?: string;
 }
 
@@ -18,6 +19,7 @@ export function CheckoutForm() {
     deliveryMethod,
     deliveryLocation,
     deliveryFeeKes,
+    deliveryConfig,
     placeOrder,
     backToCart,
     isPlacingOrder,
@@ -25,8 +27,10 @@ export function CheckoutForm() {
   } = useCart();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [note, setNote] = useState("");
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
 
   const isPickup = deliveryMethod === "pickup";
@@ -42,6 +46,9 @@ export function CheckoutForm() {
     } else if (!PHONE_PATTERN.test(cleanedPhone)) {
       nextErrors.phone = "Use a Kenyan number, e.g. 07XX XXX XXX.";
     }
+    if (email.trim() && !EMAIL_PATTERN.test(email.trim())) {
+      nextErrors.email = "That email doesn't look right.";
+    }
     if (!isPickup && !address.trim()) {
       nextErrors.address = "Enter a detailed delivery address.";
     }
@@ -50,14 +57,16 @@ export function CheckoutForm() {
     if (Object.keys(nextErrors).length > 0) return;
 
     const resolvedAddress = isPickup
-      ? `Pickup — ${DISPATCH_POINT.label}`
+      ? `Pickup — ${deliveryConfig.dispatchPoint.label}`
       : `${deliveryLocation?.areaName ?? ""} — ${address.trim()}`.trim();
 
     await placeOrder({
       name: name.trim(),
       phone: cleanedPhone,
+      email: email.trim() || undefined,
       address: resolvedAddress,
       note: note.trim() || undefined,
+      marketingConsent,
     });
   };
 
@@ -73,7 +82,10 @@ export function CheckoutForm() {
             <>
               <StoreIcon className="h-4 w-4 shrink-0 text-gold-400" />
               <span>
-                Picking up from <strong className="text-cream-50">{DISPATCH_POINT.label}</strong>
+                Picking up from{" "}
+                <strong className="text-cream-50">
+                  {deliveryConfig.dispatchPoint.label}
+                </strong>
               </span>
             </>
           ) : (
@@ -81,8 +93,12 @@ export function CheckoutForm() {
               <PinIcon className="h-4 w-4 shrink-0 text-gold-400" />
               <span>
                 Delivering to{" "}
-                <strong className="text-cream-50">{deliveryLocation?.areaName}</strong>
-                {deliveryFeeKes > 0 && <> — {formatKes(deliveryFeeKes)} delivery fee</>}
+                <strong className="text-cream-50">
+                  {deliveryLocation?.areaName}
+                </strong>
+                {deliveryFeeKes > 0 && (
+                  <> — {formatKes(deliveryFeeKes)} delivery fee</>
+                )}
               </span>
             </>
           )}
@@ -118,6 +134,24 @@ export function CheckoutForm() {
           />
         </Field>
 
+        <Field
+          label="Email (optional)"
+          htmlFor="checkout-email"
+          hint="We'll send your order confirmation here."
+          error={errors.email}
+        >
+          <input
+            id="checkout-email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            aria-invalid={Boolean(errors.email)}
+            placeholder="you@example.com"
+            className="w-full rounded-lg border border-cream-50/15 bg-char-900 px-4 py-3 text-sm text-cream-50 outline-none placeholder:text-cream-50/30 focus:border-gold-400"
+          />
+        </Field>
+
         {!isPickup && (
           <Field
             label="Detailed address"
@@ -144,16 +178,34 @@ export function CheckoutForm() {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             placeholder={
-              isPickup ? "Preferred pickup time..." : "Gate code, preferred delivery time..."
+              isPickup
+                ? "Preferred pickup time..."
+                : "Gate code, preferred delivery time..."
             }
             className="w-full resize-none rounded-lg border border-cream-50/15 bg-char-900 px-4 py-3 text-sm text-cream-50 outline-none placeholder:text-cream-50/30 focus:border-gold-400"
           />
         </Field>
+
+        <label className="flex items-start gap-3 rounded-lg border border-cream-50/10 bg-cream-50/5 px-3 py-3 text-sm text-cream-50/75">
+          <input
+            type="checkbox"
+            checked={marketingConsent}
+            onChange={(e) => setMarketingConsent(e.target.checked)}
+            className="mt-1 h-4 w-4 rounded border-cream-50/20 bg-char-900"
+          />
+          <span>
+            I agree to receive emails about my order and Hanawari products and
+            offers.
+          </span>
+        </label>
       </div>
 
       <div className="mt-auto space-y-3 pt-4">
         {placeOrderError && (
-          <p role="alert" className="rounded-lg bg-ember-600/12 px-3 py-2.5 text-xs text-ember-500">
+          <p
+            role="alert"
+            className="rounded-lg bg-ember-600/12 px-3 py-2.5 text-xs text-ember-500"
+          >
             {placeOrderError}
           </p>
         )}
@@ -196,7 +248,10 @@ function Field({
 }) {
   return (
     <div>
-      <label htmlFor={htmlFor} className="mb-1.5 block text-xs font-medium text-cream-50/70">
+      <label
+        htmlFor={htmlFor}
+        className="mb-1.5 block text-xs font-medium text-cream-50/70"
+      >
         {label}
       </label>
       {children}

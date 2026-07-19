@@ -29,6 +29,7 @@ export function ProductJar({ product, tilt, className }: ProductJarProps) {
         interactive
         controlledTilt={tilt}
         baseRotation={0.4}
+        modelUrl={product.modelUrl ?? undefined}
         className="h-full w-full"
       />
     </div>
