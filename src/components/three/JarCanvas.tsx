@@ -29,6 +29,8 @@ export interface JarCanvasProps {
   /** Slow continuous idle rotation so the jar never looks static (hero). */
   idleSpin?: boolean;
   baseRotation?: number;
+  /** Admin-uploaded per-product model; defaults to the bundled jar. */
+  modelUrl?: string;
   className?: string;
 }
 
@@ -42,6 +44,7 @@ export function JarCanvas({
   draggable = false,
   idleSpin = false,
   baseRotation = 0.5,
+  modelUrl,
   className,
 }: JarCanvasProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -142,6 +145,7 @@ export function JarCanvas({
             tiltTarget={reducedMotion ? undefined : effectiveTilt}
             animated={!reducedMotion}
             baseRotation={baseRotation}
+            modelUrl={modelUrl}
           />
           <ModelReady onReady={() => setModelReady(true)} />
         </Suspense>

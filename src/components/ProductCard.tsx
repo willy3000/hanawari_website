@@ -1,5 +1,6 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Product } from "@/types";
 import { useCart } from "@/lib/cart-context";
@@ -25,7 +26,12 @@ export function ProductCard({ product, highlighted = false }: ProductCardProps) 
   const [cardHovered, setCardHovered] = useState(false);
   const { addItem } = useCart();
 
+  const soldOut = product.stockQty === 0;
+  const lowStock =
+    product.stockQty != null && product.stockQty > 0 && product.stockQty <= 5;
+
   const handleAdd = () => {
+    if (soldOut) return;
     addItem(product.id, quantity);
     setBump((b) => b + 1);
     setQuantity(1);
@@ -56,9 +62,19 @@ export function ProductCard({ product, highlighted = false }: ProductCardProps) 
           : "border-cream-50/10"
       }`}
     >
-      {product.badge && (
+      {product.badge && !soldOut && (
         <span className="absolute -top-3 left-6 rounded-full bg-gold-400 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-char-950">
           {product.badge}
+        </span>
+      )}
+      {soldOut && (
+        <span className="absolute -top-3 left-6 rounded-full bg-char-700 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-cream-50/70">
+          Sold out
+        </span>
+      )}
+      {lowStock && (
+        <span className="absolute -top-3 right-6 rounded-full bg-ember-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-cream-50">
+          Only {product.stockQty} left
         </span>
       )}
 
@@ -67,12 +83,28 @@ export function ProductCard({ product, highlighted = false }: ProductCardProps) 
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="mx-auto h-[220px] w-[190px]"
       >
-        <ProductJar product={product} tilt={tilt} className="h-full w-full" />
+        {/* Media precedence: custom 3D model → photo → default 3D jar.
+            ProductJar itself swaps in product.modelUrl when present. */}
+        {product.imageUrl && !product.modelUrl ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-full w-full rounded-2xl object-cover"
+          />
+        ) : (
+          <ProductJar product={product} tilt={tilt} className="h-full w-full" />
+        )}
       </motion.div>
 
       <div className="mt-2 text-center">
         <h3 className="font-display text-2xl font-bold text-cream-50">
-          {product.name}
+          <Link
+            href={`/products/${product.slug}`}
+            className="transition-colors hover:text-gold-400"
+          >
+            {product.name}
+          </Link>
         </h3>
         <p className="mt-1 text-sm text-cream-50/55">{product.tagline}</p>
 
@@ -119,10 +151,11 @@ export function ProductCard({ product, highlighted = false }: ProductCardProps) 
       <button
         type="button"
         onClick={handleAdd}
-        className="mt-5 w-full rounded-full py-3.5 text-sm font-semibold uppercase tracking-[0.06em] text-cream-50 transition-transform hover:scale-[1.02] active:scale-[0.98]"
-        style={{ backgroundColor: product.accent }}
+        disabled={soldOut}
+        className="mt-5 w-full rounded-full py-3.5 text-sm font-semibold uppercase tracking-[0.06em] text-cream-50 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:scale-100"
+        style={{ backgroundColor: soldOut ? "#3f2a19" : product.accent }}
       >
-        Add to cart
+        {soldOut ? "Sold out" : "Add to cart"}
       </button>
     </div>
   );

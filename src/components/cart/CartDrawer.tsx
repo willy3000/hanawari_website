@@ -107,10 +107,21 @@ export function CartDrawer() {
               </button>
             </div>
 
-            {step === "cart" && <CartView />}
-            {step === "checkout" && <CheckoutForm />}
-            {step === "payment" && <PaymentStep />}
-            {step === "confirmation" && <OrderConfirmation />}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={step}
+                initial={{ opacity: 0, x: 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -24 }}
+                transition={{ duration: 0.18, ease: "easeOut" }}
+                className="flex min-h-0 flex-1 flex-col"
+              >
+                {step === "cart" && <CartView />}
+                {step === "checkout" && <CheckoutForm />}
+                {step === "payment" && <PaymentStep />}
+                {step === "confirmation" && <OrderConfirmation />}
+              </motion.div>
+            </AnimatePresence>
           </motion.div>
         </>
       )}

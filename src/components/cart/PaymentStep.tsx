@@ -33,12 +33,16 @@ export function PaymentStep() {
         const status = result.payment?.status;
         if (status === "success") {
           setPhase("success");
-          setTimeout(() => completePaymentStep("paid"), 900);
+          setTimeout(() => {
+            void completePaymentStep("paid");
+          }, 900);
           return;
         }
         if (status === "failed" || status === "abandoned") {
           setPhase("failed");
-          setError(result.payment?.gatewayResponse ?? "Payment was not completed.");
+          setError(
+            result.payment?.gatewayResponse ?? "Payment was not completed.",
+          );
           return;
         }
         scheduleNextPoll();
@@ -51,7 +55,7 @@ export function PaymentStep() {
     if (pollCountRef.current >= MAX_POLLS) {
       setPhase("failed");
       setError(
-        "We haven't heard back yet. You can try again, or check My Orders in a few minutes."
+        "We haven't heard back yet. You can try again, or check My Orders in a few minutes.",
       );
       return;
     }
@@ -66,12 +70,17 @@ export function PaymentStep() {
       const result = await initiatePaymentRequest(orderId);
       if (result.order.paymentStatus === "paid") {
         setPhase("success");
-        setTimeout(() => completePaymentStep("paid"), 900);
+        setTimeout(() => {
+          void completePaymentStep("paid");
+        }, 900);
         return;
       }
       if (result.payment?.status === "failed") {
         setPhase("failed");
-        setError(result.payment.gatewayResponse ?? "Could not start the M-Pesa payment.");
+        setError(
+          result.payment.gatewayResponse ??
+            "Could not start the M-Pesa payment.",
+        );
         return;
       }
       setDisplayText(result.displayText ?? result.message ?? null);
@@ -79,13 +88,17 @@ export function PaymentStep() {
       pollTimerRef.current = setTimeout(poll, POLL_INTERVAL_MS);
     } catch (err) {
       setPhase("failed");
-      setError(err instanceof Error ? err.message : "Could not start the M-Pesa payment.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Could not start the M-Pesa payment.",
+      );
     }
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     if (pollTimerRef.current) clearTimeout(pollTimerRef.current);
-    completePaymentStep();
+    await completePaymentStep();
   };
 
   const handleRetry = () => {
@@ -117,8 +130,11 @@ export function PaymentStep() {
               Pay with M-Pesa
             </h3>
             <p className="mt-1.5 max-w-[30ch] text-sm text-cream-50/65">
-              We&rsquo;ll send a prompt to <strong className="text-cream-50">{lastOrder.customer.phone}</strong>.
-              Enter your PIN to complete payment.
+              We&rsquo;ll send a prompt to{" "}
+              <strong className="text-cream-50">
+                {lastOrder.customer.phone}
+              </strong>
+              . Enter your PIN to complete payment.
             </p>
           </>
         )}
@@ -164,7 +180,9 @@ export function PaymentStep() {
             <h3 className="mt-4 font-display text-lg font-bold text-cream-50">
               Payment not completed
             </h3>
-            <p className="mt-1.5 max-w-[32ch] text-sm text-ember-500">{error}</p>
+            <p className="mt-1.5 max-w-[32ch] text-sm text-ember-500">
+              {error}
+            </p>
           </>
         )}
       </div>

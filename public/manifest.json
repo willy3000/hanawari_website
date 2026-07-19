@@ -1,0 +1,17 @@
+{
+  "name": "Hanawari — Homemade Kenyan Salsa",
+  "short_name": "Hanawari",
+  "description": "Small-batch Kenyan salsa in three heat levels. Taste the Moto.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#170f0a",
+  "theme_color": "#170f0a",
+  "icons": [
+    {
+      "src": "/assets/logo-bg.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

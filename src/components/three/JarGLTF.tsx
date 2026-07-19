@@ -29,6 +29,8 @@ export interface JarGLTFProps {
   tiltTarget?: { x: number; y: number };
   animated?: boolean;
   baseRotation?: number;
+  /** Admin-uploaded per-product model; defaults to the bundled jar. */
+  modelUrl?: string;
 }
 
 export function JarGLTF({
@@ -41,8 +43,12 @@ export function JarGLTF({
   tiltTarget,
   animated = true,
   baseRotation = 0.5,
+  modelUrl,
 }: JarGLTFProps) {
-  const { scene } = useGLTF(MODEL_PATH);
+  // Custom models won't have the jar's named materials — the normalize/center
+  // logic below is generic, and the tinting simply doesn't match, so any
+  // .glb/.gltf renders as authored.
+  const { scene } = useGLTF(modelUrl || MODEL_PATH);
   const groupRef = useRef<Group>(null);
   const tiltX = useRef(BASE_TILT_X);
   const tiltZ = useRef(BASE_TILT_Z);

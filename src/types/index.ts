@@ -15,6 +15,35 @@ export interface Product {
   badge?: string;
   /** Featured products (max 3, curated in the admin) headline the landing page. */
   featured?: boolean;
+  /** Category id (slug) assigned in the admin; missing/null = uncategorised. */
+  category?: string | null;
+  /** Product photo from the admin; missing = 3D jar rendering only. */
+  imageUrl?: string | null;
+  /** Custom 3D model (.glb/.gltf); takes precedence over imageUrl. */
+  modelUrl?: string | null;
+  /** null/undefined = stock not tracked; 0 = sold out. */
+  stockQty?: number | null;
+  /** false = hidden (the public API already filters these out). */
+  isActive?: boolean;
+}
+
+/** A promo code validated by the backend, held in the cart until checkout. */
+export interface AppliedPromo {
+  code: string;
+  type: "percent" | "fixed";
+  value: number;
+}
+
+/** Admin-controlled storefront flags, delivered with the delivery config. */
+export interface StoreStatus {
+  ordersPaused: boolean;
+  announcement: string;
+}
+
+/** Admin-managed product grouping, used to organise and filter the all-products page. */
+export interface Category {
+  id: string;
+  name: string;
 }
 
 export interface CartItem {
@@ -47,6 +76,15 @@ export interface DeliveryQuote {
   withinRange: boolean;
 }
 
+/** Admin-configured store location and delivery pricing — the source every
+ * delivery label, radius check, and fee estimate derives from. */
+export interface DeliveryConfig {
+  dispatchPoint: GeoPoint & { label: string };
+  maxRadiusKm: number;
+  baseFeeKes: number;
+  perKmFeeKes: number;
+}
+
 export type PaymentStatus = "unpaid" | "pending" | "paid" | "failed";
 
 export interface Order {
@@ -55,6 +93,8 @@ export interface Order {
   items: OrderLineItem[];
   subtotalKes: number;
   discountKes: number;
+  promoCode?: string;
+  promoDiscountKes?: number;
   deliveryFeeKes: number;
   totalKes: number;
   deliveryMethod: DeliveryMethod;
@@ -77,9 +117,14 @@ export interface CustomerDetails {
   address: string;
   note?: string;
   email?: string;
+  marketingConsent?: boolean;
 }
 
-export type PaymentAttemptStatus = "pending" | "success" | "failed" | "abandoned";
+export type PaymentAttemptStatus =
+  | "pending"
+  | "success"
+  | "failed"
+  | "abandoned";
 
 export interface PaymentAttempt {
   reference: string;
